@@ -1,6 +1,8 @@
 #Javascript Game of Life
 This is a javascript implementation of Conway's Game of Life.
 
+---
+
    Copyright 2016 Michael Hrcek
 
    Licensed under the Apache License, Version 2.0 (the "License");
