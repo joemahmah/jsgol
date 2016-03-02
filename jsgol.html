@@ -1,0 +1,160 @@
+<html>
+
+<head>
+	<title>JS Game of Life</title>
+</head>
+
+
+<body>
+
+<h2>Javascript Game of Life</h2>
+
+<button type="button" onclick="crank()">Crank It!</button>
+<button type="button" onclick="letsgo()">Let The Ride Begin!</button>
+
+<br>
+
+<button type="button" onclick="symbol = 'O';">Render 'O'</button>
+<button type="button" onclick="symbol = '&#9785;';">Render 
+'&#9785;'</button>
+<button type="button" onclick="symbol = '&#9762;';">Render 
+'&#9762;'</button>
+<button type="button" onclick="symbol = '&#9769;';">Render 
+'&#9769;'</button>
+<button type="button" onclick="symbol = '&#9737;';">Render 
+'&#9737;'</button>
+<button type="button" onclick="symbol = '&#167;';">Render 
+'&#167;'</button>
+
+
+<script>
+
+var world = [];
+var tmp = [];
+var symbol = "O";
+
+function letsgo(){
+	window.setInterval(function(){
+		crank();
+	},1000);
+}
+
+function randInt(){
+	var num = Math.floor(Math.random() * 3);
+	if(num <= 1){
+		return 0;
+	}
+	return 1;
+}
+
+function populate(x,y){
+
+	world = new Array(y);
+
+	for(var i=0; i<y; i++){
+		world[i] = new Array(x);
+		for(var j=0; j<x; j++){
+			world[i][j] = randInt();
+		}
+	}
+
+	tmp = world.slice(0);
+
+}
+
+function removeElement(id){
+	var elem = document.getElementById(id);
+	if(elem != null){
+		elem.parentNode.removeChild(elem);
+	}
+}
+
+function syncArray(){
+	world = tmp.slice(0);
+}
+
+function getSurrounding(i,j){
+
+	var count = 0;
+
+	for(var ix=i-1; ix<=i+1; ix++){
+		for(var jx=j-1; jx<=j+1; jx++){
+			if(ix != i || jx != j){
+				if(world[ix][jx] != 0){
+					count++;
+				}
+			}
+		}
+	}
+
+	return count;
+
+}
+
+function crank(){
+
+	removeElement("grid");
+
+	var div = document.createElement('div');
+	div.setAttribute('id','grid');
+	document.body.appendChild(div);
+
+	for(var i=0; i<world.length; i++){
+
+		for(var j=0; j<world[i].length; j++){
+			var out = document.createElement("span")
+			out.innerHTML = symbol;
+			if(world[i][j] == 1){
+				out.style.color="red";
+			} else{
+				out.style.color="white";
+			}
+			div.appendChild(out);
+
+			var isAlive = world[i][j] != 0;
+
+			if(i == 0 || i == world.length - 1 || j == 0 || 
+j == world[i].length - 1){
+				if(isAlive){
+					tmp[i][j] = 0;
+					//console.log(i + "," + j + ": 
+At border, Killing.");
+				}
+			} else{
+				var surrounding = getSurrounding(i,j);
+				if(isAlive){
+					if(surrounding < 2){
+						tmp[i][j] = 0;
+						//console.log(i + "," + 
+j + ": Less than two, killing.");
+					} else if(surrounding > 3){
+						tmp[i][j] = 0;
+						//console.log(i + "," + 
+j + ": More than three, killing.");
+					}
+				} else {
+				 	if(surrounding == 3){
+						tmp[i][j] = "1";
+						//console.log(i + "," + 
+j + ": Next is three. Reviving!");
+					}
+				}
+			}
+
+		}
+		var br = document.createElement("br");
+		div.appendChild(br);
+	}
+
+	syncArray();
+}
+
+populate(75,35);
+crank();
+
+</script>
+
+</body>
+
+</html>
+
